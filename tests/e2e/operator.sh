@@ -121,7 +121,7 @@ install_ccruntime() {
 	local overlay_dir="${ccruntime_overlay_basedir}/${ccruntime_overlay}"
 
 	# Use the built pre-install image
-	kustomization_set_image  "${ccruntime_overlay_basedir}/default" \
+	kustomization_set_image  "${ccruntime_overlay_basedir}/${ccruntime_overlay}" \
 		"quay.io/confidential-containers/reqs-payload" \
 		"${PRE_INSTALL_IMG}"
 
@@ -294,8 +294,12 @@ usage() {
 	cat <<-EOF
 	Utility to build/install/uninstall the operator.
 
-	Use: $0 [-h|--help] [command], where:
+	Use: $0 [-h|--help] [-o CCRUNTIMEOVERLAY] [command], where:
 	-h | --help : show this usage
+	-o CCRUNTIMEOVERLAY: optional command (defaults to 'default') to specify which overlay to use to. Can be:
+	 "default": Install the standard overlay (for x86 and local hypervisor). The default value on x86 hardware.
+	 "s390x": Install the s390x local hypervisor overlay. Defaults to this if running on s390x hardware.
+	 "peer-pods": Install the remote hypervisor overlay.
 	command : optional command (build and install by default). Can be:
 	 "build": build only,
 	 "install": install only,
@@ -305,10 +309,6 @@ usage() {
 }
 
 main() {
-	ccruntime_overlay="default"
-	if [ "$(uname -m)" = "s390x" ]; then
-		ccruntime_overlay="s390x"
-	fi
 	if [ $# -eq 0 ]; then
 		build_operator
 		install_operator
@@ -317,7 +317,7 @@ main() {
 		wait_for_stabilization
 	else
 		case $1 in
-			-h|--help) usage && exit 0;;
+			--help) usage && exit 0;;
 			build)
 				build_operator
 				build_pre_install_img
@@ -340,4 +340,15 @@ main() {
 	fi
 }
 
-main "$@"
+ccruntime_overlay="default"
+if [ "$(uname -m)" = "s390x" ]; then
+	ccruntime_overlay="s390x"
+fi
+
+while getopts "o:" flag; do
+	case "$flag" in
+			o) ccruntime_overlay=${OPTARG:-ccruntime_overlay};;
+			h) usage && exit 0;;
+	esac
+done
+main="${@:$OPTIND}"

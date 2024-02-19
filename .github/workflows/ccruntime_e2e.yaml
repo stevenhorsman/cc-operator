@@ -26,6 +26,9 @@ jobs:
           - "az-ubuntu-2004"
           - "az-ubuntu-2204"
           - "s390x"
+        ccruntime_overlay:
+          - ''
+          - "peer-pods"
         exclude:
           - runtimeclass: "kata-clh"
             instance: "s390x"
@@ -62,7 +65,7 @@ jobs:
           if [ $RUNNING_INSTANCE = "s390x" ]; then
             args=""
           fi
-          ./run-local.sh -t -r "${{ matrix.runtimeclass }}" "${args}"
+          ./run-local.sh -t -r "${{ matrix.runtimeclass }}" -o "${{ matrix.ccruntime_overlay }}" "${args}"
         env:
           RUNNING_INSTANCE: ${{ matrix.instance }}
 

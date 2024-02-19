@@ -14,6 +14,7 @@ step_bootstrap_env=0
 step_start_cluster=0
 step_install_operator=0
 runtimeclass=""
+ccruntimeclass=""
 undo="false"
 timeout="false"
 
@@ -24,8 +25,11 @@ usage() {
 	Important: it will change the system so ensure it is executed in a development
 	environment.
 
-	Use: $0 [-h|--help] [-r RUNTIMECLASS] [-u], where:
+	Use: $0 [-h|--help] [-o CCRUNTIMEOVERLAY] [-r RUNTIMECLASS] [-u], where:
 	-h | --help : show this usage
+	-o CCRUNTIMEOVERLAY: allows a user to specify the cc runtime overlay used
+						 (default/s390x/peer-pods) to install local hypervisor
+						 or remote hypervisor versison. Defaults to local hypervisor
 	-r RUNTIMECLASS: configure to use the RUNTIMECLASS (e.g. kata-clh) on
                          the tests. Defaults to "kata-qemu".
 	-u: undo the installation and configuration before exiting. Useful for
@@ -35,9 +39,10 @@ usage() {
 }
 
 parse_args() {
-	while getopts "hr:ut" opt; do
+	while getopts "ho:r:ut" opt; do
 		case $opt in
 			h) usage && exit 0;;
+			o) ccruntimeclass="$OPTARG";;
 			r) runtimeclass="$OPTARG";;
 			u) undo="true";;
 			t) timeout="true";;
@@ -111,7 +116,11 @@ main() {
 
 	echo "::info:: Build and install the operator"
 	step_install_operator=1
-	run 20m sudo -E PATH="$PATH" bash -c './operator.sh'
+	cmd="run 20m sudo -E PATH="${PATH}" bash -c './operator.sh'"
+	if [ -n "${ccruntimeclass}" ]; then
+		cmd+=" -c ${ccruntimeclass}"
+	fi
+	eval ${cmd}
 
 	echo "::info:: Run tests"
 	cmd="run 20m sudo -E PATH=\"$PATH\" bash -c "
