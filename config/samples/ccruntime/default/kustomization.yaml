@@ -9,8 +9,8 @@ resources:
 images:
 - name: quay.io/confidential-containers/reqs-payload
   newTag: 6fa876bea238c4ba08af0f9b1a696f28c834e84f
-- name: quay.io/kata-containers/kata-deploy
-  newTag: 3.19.1
+- name: quay.io/kata-containers/kata-deploy-ci
+  newTag: kata-containers-47184e82f5bbd85b00675dce61d940a75fbe44c5-amd64
 
 patches:
 - patch: |-
@@ -48,7 +48,7 @@ patches:
           value: "false"
         # If set, the Kata Containers agent https_proxy will be set to the
         # specified value allowing then the pod sandbox to correctly pull
-        # images in such environment. 
+        # images in such environment.
         # - name: "AGENT_HTTPS_PROXY"
         #   value: "https://proxy.example.com:3129"
         # If set, the Kata Containers agent no_proxy will be set to the
