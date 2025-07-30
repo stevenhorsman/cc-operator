@@ -10,9 +10,9 @@ resources:
 images:
 - name: quay.io/confidential-containers/reqs-payload
   newTag: 6fa876bea238c4ba08af0f9b1a696f28c834e84f
-- name: cc-runtime-install-pod
+- name: quay.io/kata-containers/kata-deploy
   newName: quay.io/kata-containers/kata-deploy-ci
-  newTag: kata-containers-47184e82f5bbd85b00675dce61d940a75fbe44c5-amd64
+  newTag: kata-containers-7d709a0759bda33f353ce69cbb2c343ac68c34b5-amd64
 
 
 patches:
