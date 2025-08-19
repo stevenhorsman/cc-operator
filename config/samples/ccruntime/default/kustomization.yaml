@@ -11,7 +11,7 @@ images:
   newTag: 6fa876bea238c4ba08af0f9b1a696f28c834e84f
 - name: quay.io/kata-containers/kata-deploy
   newName: quay.io/kata-containers/kata-deploy-ci
-  newTag: kata-containers-11c744c5c3ca7fc92cc4fbf4fbcca810fa15b754-amd64
+  newTag: kata-containers-9cebbab29d644ccd41b6eb58eb4020025f053e65-amd64
 
 patches:
 - patch: |-
